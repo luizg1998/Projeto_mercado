@@ -1,0 +1,138 @@
+<h4>Produtos</h4>
+<div class="col-lg-12" id="div_edicao">
+    <div class="row">
+        <div class="col-lg-4">
+            <input type="text" id="nome" class="form-control" placeholder="Nome" />
+        </div>
+        <div class="col-lg-4">
+            <input type="text" id="valor" class="form-control maskPercentualOuValor" placeholder="Valor (R$)" />
+        </div>
+        <div class="col-lg-4">
+            <select id="id_tipo_produto" class="form-control" placeholder="Tipo Produto">
+                <option value="">Selecione o tipo do produto</option>
+            </select>
+        </div>
+        <div class="col-lg-12" id="info_acao"></div>
+        <div class="col-lg-12" style="margin-top: 10px; text-align: right;">
+            <button onclick="retornaEdicao();resetInputs();" type="button" id="btnCancelar" class="btn btn-danger"
+                style="display: none;">
+                <i class="fa fa-times"></i> Cancelar
+            </button>
+            <button onclick="inserir_atualizar_produtos(this)" type="button" data-id="" id="btnSalvar"
+                class="btn btn-success">
+                <i class="fa fa-check"></i> Salvar
+            </button>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12" style="margin-top: 15px;">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Valor</th>
+                    <th>Tipo Produto</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="table_content"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+    var table = 'produtos';
+
+    var tipos_produtos = [];
+    montaSlcTiposProdutos();
+
+    getAll(table);
+
+    function montaLinhas(dados) {
+        var linhas = '';;
+
+        $.each(dados, function (index, val) {
+            var acoes = `<a href="javascript:void(0)" onclick="editar(this, ${val.id}, '${table}')" class="btn btn-default btn-xs" title="Editar">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a href="javascript:void(0)" onclick="excluir(this, ${val.id}, '${table}')" class="btn btn-default btn-xs" title="Excluir">
+                            <i class="fa fa-trash"></i>
+                        </a>`
+
+            linhas += `<tr>
+                            <td>${val.id}</td>
+                            <td>${val.nome}</td>
+                            <td>R$ ${parseFloat((val.valor) ? val.valor : 0).toFixed(2).replace('.', ',')}</td>
+                            <td class="id_tipo_${val.id_tipo_produto}"></td>
+                            <td>${acoes}</td>
+                        </tr>`;
+        });
+
+        getNomesTipos();
+
+        return linhas;
+    }
+
+    function inserir_atualizar_produtos(elem) {
+
+        var id = $(elem).attr('data-id');
+
+        var dados = {
+            'nome': $('#nome').val(),
+            'valor': $('#valor').val().replace(',', '.'),
+            'id_tipo_produto': $('#id_tipo_produto').val()
+        }
+
+        inserir_atualizar(elem, id, table, dados)
+    }
+
+    function preencherInputsEditar(dados) {
+        $('#nome').val(dados.nome);
+
+        var valor = (dados.valor) ? parseFloat(dados.valor).toFixed(2) : '';
+        $('#valor').val(valor.replace('.', ','));
+
+        $('#id_tipo_produto').val(dados.id_tipo_produto);
+    }
+
+    function montaSlcTiposProdutos() {
+        var data_post = {
+            'function': 'get_all',
+            'table': 'tipos_produtos'
+        };
+
+        $.post('../functions.php', data_post, function (response) {
+            response = JSON.parse(response);
+
+            var options = '';
+
+            $.each(response.dados, function (index, val) {
+                var element = {
+                    'id':val.id,
+                    'nome_tipo':val.nome_tipo
+                }
+                tipos_produtos.push(element);
+                options += `<option value="${val.id}">${val.nome_tipo}</option>`;
+            });
+
+            $('#id_tipo_produto').append(options);
+        });
+
+    }
+
+    function getNomesTipos() {
+        var data_post = {
+            'function': 'get_all',
+            'table': 'tipos_produtos'
+        };
+
+        $.post('../functions.php', data_post, function (response) {
+            response = JSON.parse(response);
+            $.each(response.dados, function (index, val) {
+                $('#table_content').find('td.id_tipo_'+val.id).text(val.nome_tipo);
+            });
+        });
+    }
+</script>

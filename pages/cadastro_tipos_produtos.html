@@ -1,0 +1,87 @@
+<h4>Tipos Produtos</h4>
+<div class="col-lg-6" id="div_edicao">
+    <div class="row">
+        <div class="col-lg-6">
+            <input type="text" id="nome_tipo" class="form-control" placeholder="Descrição" />
+        </div>
+        <div class="col-lg-6">
+            <input type="text" id="perc_imposto" class="form-control maskPercentualOuValor"
+                placeholder="Percentual de Imposto (%)" maxlength="5" />
+        </div>
+        <div class="col-lg-12" id="info_acao"></div>
+        <div class="col-lg-12" style="margin-top: 10px; text-align: right;">
+            <button onclick="retornaEdicao();resetInputs();" type="button" id="btnCancelar" class="btn btn-danger"
+                style="display: none;">
+                <i class="fa fa-times"></i> Cancelar
+            </button>
+            <button onclick="inserir_atualizar_tipo_produtos(this)" type="button" data-id="" id="btnSalvar"
+                class="btn btn-success">
+                <i class="fa fa-check"></i> Salvar
+            </button>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style="width: 55%">Descrição</th>
+                    <th>Perc. Imposto</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="table_content"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+    var table = 'tipos_produtos';
+
+    getAll(table);
+
+    function montaLinhas(dados) {
+        var linhas = '';
+
+        var obs_excluir = 'Ao excluir um registro, todos os produtos relacionados serão excluídos';
+
+        $.each(dados, function (index, val) {
+            var acoes = `<a href="javascript:void(0)" onclick="editar(this, ${val.id}, '${table}')" class="btn btn-default btn-xs" title="Editar">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a href="javascript:void(0)" onclick="excluir(this, ${val.id}, '${table}', '${obs_excluir}')" class="btn btn-default btn-xs" title="Excluir">
+                            <i class="fa fa-trash"></i>
+                        </a>`
+
+            linhas += `<tr>
+                            <td>${val.id}</td>
+                            <td>${val.nome_tipo}</td>
+                            <td>${parseFloat((val.perc_imposto) ? val.perc_imposto : 0).toFixed(2).replace('.', ',')}%</td>
+                            <td>${acoes}</td>
+                        </tr>`;
+        });
+
+        return linhas;
+    }
+
+    function inserir_atualizar_tipo_produtos(elem) {
+
+        var id = $(elem).attr('data-id');
+
+        var dados = {
+            'nome_tipo': $('#nome_tipo').val(),
+            'perc_imposto': $('#perc_imposto').val().replace(',', '.')
+        }
+
+        inserir_atualizar(elem, id, table, dados)
+    }
+
+    function preencherInputsEditar(dados) {
+        $('#nome_tipo').val(dados.nome_tipo);
+
+        var perc_imposto = (dados.perc_imposto) ? parseFloat(dados.perc_imposto).toFixed(2) : '';
+        $('#perc_imposto').val(perc_imposto.replace('.', ','));
+    }
+</script>

@@ -6,6 +6,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mercado</title>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -14,6 +15,16 @@
     <!-- Optional theme for Booostrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
         integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+        integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- jQuery Confirm para usar em mensagens e avisos (CSS) -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+
+    <link rel="stylesheet" href="css/custom.css" />
 
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
@@ -24,6 +35,14 @@
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
 
+    <!-- jQuery Confirm para usar em mensagens e avisos (JS) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+
+    <!-- Máscara JQuery para percentuais, valores, telefones, etc. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+        integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="js/functions.js"></script>
 </head>
 
@@ -31,14 +50,24 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="javascript:void(0)">Mercado</a>
+                <a class="navbar-brand">Mercado</a>
             </div>
-            <ul class="nav navbar-nav">
-                <li class="active">
-                    <a href="javascript:void(0)">Cadastro</a>
+            <ul id="menu" class="nav navbar-nav">
+                <li id="li_inicio">
+                    <a href="javascript:void(0)" onclick="trocaPagina(this, 'inicio')">Início</a>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Cadastros
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)"
+                                onclick="trocaPagina(this, 'cadastro_tipos_produtos', true)">Tipos de produtos</a></li>
+                        <li><a href="javascript:void(0)"
+                                onclick="trocaPagina(this, 'cadastro_produtos', true)">Produtos</a></li>
+                    </ul>
                 </li>
                 <li>
-                    <a href="javascript:void(0)">Venda</a>
+                    <a href="javascript:void(0)" onclick="trocaPagina(this, 'venda')">Venda</a>
                 </li>
             </ul>
         </div>
@@ -47,7 +76,7 @@
     <!-- Page Content -->
     <div class="panel panel-default">
         <div id="main" class="panel-body">
-            A Basic Panel
+
         </div>
     </div>
 </body>
