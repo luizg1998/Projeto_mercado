@@ -89,7 +89,7 @@ function inserir_atualizar(elem, id = null, table = null, dados = null) {
                 retornaEdicao();
             }
             getAll(table);
-        }else{
+        } else {
             simpleMsg('erro', 'Erro ao efetuar ação. Tente novamente!');
         }
 
@@ -156,7 +156,7 @@ function retornaEdicao() {
 
 function excluir(elem, id, table, obs = '') {
     var msg = `Você tem deseja que excluir o registro ID ${id}?`;
-    msg += (!obs) ? '' : `<br><b>Observação: ${obs}</b>` ;
+    msg += (!obs) ? '' : `<br><b>Observação: ${obs}</b>`;
 
     $.confirm({
         title: 'Confirmar exclusão',
@@ -183,10 +183,10 @@ function excluir(elem, id, table, obs = '') {
                     $.post('../functions.php', data_post, function (response) {
                         response = JSON.parse(response);
 
-                        if(response.status == 1){
+                        if (response.status == 1) {
                             simpleMsg('ok', 'Registro excluído com sucesso!');
                             getAll(table);
-                        }else{
+                        } else {
                             simpleMsg('erro', 'Erro ao excluir registro!');
                         }
 
@@ -195,4 +195,8 @@ function excluir(elem, id, table, obs = '') {
             }
         }
     });
+}
+
+function percentual(numero, perc) {
+    return (numero / 100) * perc;
 }

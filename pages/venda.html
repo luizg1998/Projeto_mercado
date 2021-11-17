@@ -1,0 +1,231 @@
+<h4>Venda</h4>
+<div class="col-lg-12" id="div_edicao">
+    <div class="row">
+        <div class="col-lg-8">
+            <label>Produto</label>
+            <select id="id_produto" class="form-control" placeholder="Produto">
+                <option value="">Selecione o produto</option>
+            </select>
+        </div>
+        <div class="col-lg-2">
+            <label>Qtd.</label>
+            <input type="text" id="qtd" class="form-control" placeholder="Quantidade" value="1" />
+        </div>
+        <div class="col-lg-1" style="margin-top: 25px;">
+            <button onclick="adicionar_produtos(this)" type="button" data-id="" id="btnSalvar" class="btn btn-success">
+                <i class="fa fa-plus"></i> Adicionar
+            </button>
+        </div>
+    </div>
+</div>
+<div id="area_venda" class="col-lg-12" style="display: none; margin-top: 25px;">
+    <div id="tabela_produtos" class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Valor Un.</th>
+                    <th>Qtd</th>
+                    <th>Valor Total</th>
+                    <th>(%) Imposto</th>
+                    <th>Valor Imposto</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="table_content"></tbody>
+        </table>
+    </div>
+    <hr>
+    <div id="area_totais">
+        <div class="col-lg-3">
+            <h4>Totais:</h4>
+        </div>
+        <div class="col-lg-3">Total produtos: R$<span id="total_produtos"></span></div>
+        <div class="col-lg-3">Total impostos: R$<span id="total_impostos"></span></div>
+        <div class="col-lg-3">Total: R$<span id="total"></span></div>
+    </div>
+</div>
+<script>
+    // Array com os ids apenas, mais fácil para verificar se um produto já foi adicionado
+    var ids_produtos_adicionados = [];
+
+    // Array com os produtos adicionados em forma de objetos, usado para totalização e atualização de quantidades
+    // Apenas as informações necessárias para os cálculos
+    var obj_produtos_adicionados = [];
+
+    // Array com os tipos de produtos
+    var tipos_produtos = [];
+
+    montaSlcProdutos();
+    getTiposProdutos();
+
+    function adicionar_produtos(elem) {
+        var id_produto = $('#id_produto').val();
+
+        if (id_produto == '') {
+            simpleMsg('erro', 'Por favor, selecione o produto a ser adicionado!');
+            return false;
+        }
+
+        if (ids_produtos_adicionados.includes(id_produto)) {
+            // Eu escondo o option do produto selecionado após a adição então é difícil acontecer esta situação, mas por precaução eu faço esta verificação do mesmo jeito
+            simpleMsg('erro', 'Produto já adicionado!');
+            return false;
+        }
+
+        if (ids_produtos_adicionados.length == 0) {
+            $('#area_venda').show();
+        }
+        ids_produtos_adicionados.push(id_produto);
+
+        var elem_selected = $('#id_produto option:selected');
+        var qtd = $('#qtd').val();
+
+        var nome_produto = elem_selected.attr('data-nome');
+        var valor_un = elem_selected.attr('data-valor');
+        var imposto_perc = getImpostoPerc(elem_selected.attr('data-id-tipo-produto'));
+
+        var valor_total = valor_un * qtd;
+        var valor_imposto = percentual(valor_total, imposto_perc);
+
+        var novo_produto_adicionado = {
+            'id_produto': id_produto,
+            'valor_un': valor_un,
+            'qtd': qtd,
+            'valor_total': valor_total,
+            'imposto_perc': imposto_perc,
+            'valor_imposto': valor_imposto
+        };
+
+        obj_produtos_adicionados.push(novo_produto_adicionado);
+
+        var acao_excluir = `<a href="javascript:void(0)" onclick="excluir(this, ${id_produto})" class="btn btn-default btn-xs" title="Excluir">
+                                <i class="fa fa-trash"></i>
+                            </a>`;
+
+        var nova_linha = `<tr class="id_${id_produto}">
+                            <td class="nome">${nome_produto}</td>
+                            <td>R$ ${parseFloat(valor_un).toFixed(2).replace('.', ',')}</td>
+                            <td class="qtd">
+                                <a href="javascript:void(0)" onclick="alterar_qtd('-', ${id_produto})" class="btn btn-default btn-xs" title="Retirar">
+                                    <i class="fa fa-minus"></i>
+                                </a>
+                                <span>${qtd}</span>
+                                <a href="javascript:void(0)" onclick="alterar_qtd('+', ${id_produto})" class="btn btn-default btn-xs" title="Acrescentar">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                            <td class="valor_total" >R$ ${parseFloat(valor_total).toFixed(2).replace('.', ',')}</td>
+                            <td>${parseFloat(imposto_perc).toFixed(2).replace('.', ',')}%</td>
+                            <td class="valor_imposto" >R$ ${parseFloat(valor_imposto).toFixed(2).replace('.', ',')}</td>
+                            <td>${acao_excluir}</td>
+                        </tr>`;
+
+        $('#table_content').append(nova_linha);
+
+        elem_selected.hide();
+        $('#qtd').val(1);
+        $('#id_produto').val('');
+
+        atualizaTotais();
+    }
+
+    function alterar_qtd(acao, id_produto) {
+        var index_produto = null;
+        $.each(obj_produtos_adicionados, function (index, val) {
+            if (val.id_produto == id_produto) {
+                index_produto = index;
+                return;
+            }
+        });
+
+        if (acao == '+') {
+            // Acrescentar qtd
+            obj_produtos_adicionados[index_produto].qtd++;
+        } else if (acao == '-') {
+            // Retirar qtd
+            obj_produtos_adicionados[index_produto].qtd--;
+        }
+
+        var nova_qtd = obj_produtos_adicionados[index_produto].qtd;
+
+        var novo_total = obj_produtos_adicionados[index_produto].valor_un * nova_qtd
+        obj_produtos_adicionados[index_produto].valor_total = novo_total;
+
+        var novo_imposto = percentual(novo_total, obj_produtos_adicionados[index_produto].imposto_perc);
+        obj_produtos_adicionados[index_produto].valor_imposto = novo_imposto;
+
+        var tr = $('tr.id_' + obj_produtos_adicionados[index_produto].id_produto);
+
+        tr.find('td.qtd span').text(nova_qtd);
+        tr.find('td.valor_total').text(`R$ ${parseFloat(novo_total).toFixed(2).replace('.', ',')}`);
+        tr.find('td.valor_imposto').text(`R$ ${parseFloat(novo_imposto).toFixed(2).replace('.', ',')}`);
+
+        atualizaTotais();
+    }
+
+    function atualizaTotais() {
+        var total_produtos = 0;
+        var total_impostos = 0;
+
+        $.each(obj_produtos_adicionados, function (index, val) {
+            total_produtos += val.valor_total;
+            total_impostos += val.valor_imposto;
+        });
+
+        $('span#total_produtos').text(parseFloat(total_produtos).toFixed(2).replace('.', ','));
+        $('span#total_impostos').text(parseFloat(total_impostos).toFixed(2).replace('.', ','));
+        $('span#total').text(parseFloat(total_produtos+total_impostos).toFixed(2).replace('.', ','));
+    }
+
+    function montaSlcProdutos() {
+        var data_post = {
+            'function': 'get_all',
+            'table': 'produtos'
+        };
+
+        $.post('../functions.php', data_post, function (response) {
+            response = JSON.parse(response);
+
+            var options = '';
+
+            $.each(response.dados, function (index, val) {
+                options += `<option value="${val.id}" data-nome="${val.nome}" data-valor="${val.valor}" data-id-tipo-produto="${val.id_tipo_produto}" >
+                                ${val.nome} - R$ ${parseFloat(val.valor).toFixed(2).replace('.', ',')}
+                            </option>`;
+            });
+
+            $('#id_produto').append(options);
+        });
+
+    }
+
+    function getTiposProdutos() {
+        // Essa função vai buscar pos tipos de produtos e seus impostos para poder calcular na venda
+
+        var data_post = {
+            'function': 'get_all',
+            'table': 'tipos_produtos'
+        };
+
+        $.post('../functions.php', data_post, function (response) {
+            response = JSON.parse(response);
+
+            tipos_produtos = response.dados
+        });
+
+    }
+
+    function getImpostoPerc(id) {
+        var imposto_perc;
+
+        $.each(tipos_produtos, function (index, val) {
+            if (id == val.id) {
+                imposto_perc = val.perc_imposto
+                return;
+            }
+        });
+
+        return imposto_perc;
+    }
+</script>
