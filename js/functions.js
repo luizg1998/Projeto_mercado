@@ -7,7 +7,6 @@ $(document).ready(function () {
 
 });
 
-
 function trocaPagina(elem = null, nome_pagina, dropdown = false) {
     // elem => elemento clicado
 

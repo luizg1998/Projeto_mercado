@@ -64,7 +64,7 @@ function insert($table, $dados)
 
     if (!!$insert_id) {
         return [
-            'insert_id'=>$insert_id,
+            'insert_id' => $insert_id,
             'status' => 1,
         ];
     } else {
@@ -133,5 +133,3 @@ function delete($table, $id)
         ];
     }
 }
-
-?>

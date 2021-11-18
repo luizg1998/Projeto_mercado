@@ -70,7 +70,7 @@
         var produtos_post = [];
 
         $.each(obj_produtos_adicionados, function (index, val) {
-            produtos_post.push({'id_produto':val.id_produto,'qtd_produto':val.qtd});
+            produtos_post.push({ 'id_produto': val.id_produto, 'qtd_produto': val.qtd });
         });
 
         console.log(produtos_post);
@@ -85,9 +85,9 @@
             response = JSON.parse(response);
             console.log(response);
 
-            if(response.status == 1){
+            if (response.status == 1) {
                 simpleMsg('ok', 'Venda efetuada com sucesso');
-            }else{
+            } else {
                 simpleMsg('erro', 'Erro ao efetuar venda!');
             }
         });
@@ -210,7 +210,7 @@
 
     function montaSlcProdutos() {
         var data_post = {
-            'destino':'produtos',
+            'destino': 'produtos',
             'function': 'get_all'
         };
 

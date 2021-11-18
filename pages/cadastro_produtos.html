@@ -43,20 +43,20 @@
 </div>
 <script>
 
-    var table = 'produtos';
+    var destino = 'produtos';
 
     montaSlcTiposProdutos();
 
-    getAll(table);
+    getAll(destino);
 
     function montaLinhas(dados) {
         var linhas = '';;
 
         $.each(dados, function (index, val) {
-            var acoes = `<a href="javascript:void(0)" onclick="editar(this, ${val.id}, '${table}')" class="btn btn-default btn-xs" title="Editar">
+            var acoes = `<a href="javascript:void(0)" onclick="editar(this, ${val.id}, '${destino}')" class="btn btn-default btn-xs" title="Editar">
                             <i class="fa fa-pencil"></i>
                         </a>
-                        <a href="javascript:void(0)" onclick="excluir(this, ${val.id}, '${table}')" class="btn btn-default btn-xs" title="Excluir">
+                        <a href="javascript:void(0)" onclick="excluir(this, ${val.id}, '${destino}')" class="btn btn-default btn-xs" title="Excluir">
                             <i class="fa fa-trash"></i>
                         </a>`
 
@@ -78,15 +78,15 @@
 
         var id = $(elem).attr('data-id');
 
-        if( $('#nome').val() == '' ){
+        if ($('#nome').val() == '') {
             simpleMsg('erro', 'Por favor, digite o nome do produto!');
             return false;
         }
-        if( $('#valor').val() == '' ){
+        if ($('#valor').val() == '') {
             simpleMsg('erro', 'Por favor, digite o valor do produto!');
             return false;
         }
-        if( $('#id_tipo_produto').val() == '' ){
+        if ($('#id_tipo_produto').val() == '') {
             simpleMsg('erro', 'Por favor, selecione o tipo do produto!');
             return false;
         }
@@ -97,7 +97,7 @@
             'id_tipo_produto': $('#id_tipo_produto').val()
         }
 
-        inserir_atualizar(elem, id, table, dados)
+        inserir_atualizar(elem, id, destino, dados)
     }
 
     function preencherInputsEditar(dados) {
@@ -138,7 +138,7 @@
         $.post('../handler.php', data_post, function (response) {
             response = JSON.parse(response);
             $.each(response.dados, function (index, val) {
-                $('#table_content').find('td.id_tipo_'+val.id).text(val.nome_tipo);
+                $('#table_content').find('td.id_tipo_' + val.id).text(val.nome_tipo);
             });
         });
     }

@@ -23,25 +23,3 @@ switch ($_POST['destino']) {
         echo json_encode(['status' => 0]);
         break;
 }
-
-exit;
-switch ($_POST['function']) {
-    case 'get_all':
-        echo json_encode(get_all($_POST['table']));
-        break;
-    case 'get_by_id':
-        echo json_encode(get_by_id($_POST['table'], $_POST['id']));
-        break;
-    case 'insert':
-        echo json_encode(insert($_POST['table'], $_POST['dados']));
-        break;
-    case 'update':
-        echo json_encode(update($_POST['table'], $_POST['dados'], $_POST['id']));
-        break;
-    case 'delete':
-        echo json_encode(delete($_POST['table'], $_POST['id']));
-        break;
-    default:
-        echo 0;
-        break;
-}
