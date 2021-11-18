@@ -38,9 +38,9 @@
 </div>
 <script>
 
-    var table = 'tipos_produtos';
+    var destino = 'tipos_produtos';
 
-    getAll(table);
+    getAll(destino);
 
     function montaLinhas(dados) {
         var linhas = '';
@@ -48,10 +48,10 @@
         var obs_excluir = 'Ao excluir um registro, todos os produtos relacionados serão excluídos';
 
         $.each(dados, function (index, val) {
-            var acoes = `<a href="javascript:void(0)" onclick="editar(this, ${val.id}, '${table}')" class="btn btn-default btn-xs" title="Editar">
+            var acoes = `<a href="javascript:void(0)" onclick="editar(this, ${val.id}, '${destino}')" class="btn btn-default btn-xs" title="Editar">
                             <i class="fa fa-pencil"></i>
                         </a>
-                        <a href="javascript:void(0)" onclick="excluir(this, ${val.id}, '${table}', '${obs_excluir}')" class="btn btn-default btn-xs" title="Excluir">
+                        <a href="javascript:void(0)" onclick="excluir(this, ${val.id}, '${destino}', '${obs_excluir}')" class="btn btn-default btn-xs" title="Excluir">
                             <i class="fa fa-trash"></i>
                         </a>`
 
@@ -70,12 +70,21 @@
 
         var id = $(elem).attr('data-id');
 
+        if( $('#nome_tipo').val() == '' ){
+            simpleMsg('erro', 'Por favor, digite a descrição do tipo de produto!');
+            return false;
+        }
+        if( $('#perc_imposto').val() == '' ){
+            simpleMsg('erro', 'Por favor, digite o percentual de imposto!');
+            return false;
+        }
+
         var dados = {
             'nome_tipo': $('#nome_tipo').val(),
             'perc_imposto': $('#perc_imposto').val().replace(',', '.')
         }
 
-        inserir_atualizar(elem, id, table, dados)
+        inserir_atualizar(elem, id, destino, dados)
     }
 
     function preencherInputsEditar(dados) {

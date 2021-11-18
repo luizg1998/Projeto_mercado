@@ -35,22 +35,22 @@ function loader(elem) {
     });
 }
 
-function getAll(table = null) {
-    if (!table) {
+function getAll(destino = null) {
+    if (!destino) {
         return false;
     }
 
     var data_post = {
-        'function': 'get_all',
-        'table': table
+        'destino': destino,
+        'function': 'get_all'
     };
 
-    $.post('../functions.php', data_post, function (response) {
+    $.post('../handler.php', data_post, function (response) {
         response = JSON.parse(response);
 
         if (response.status == 0) {
             $('#table_content').html(`<tr>
-                                        <td colspan="2" class="text-center">Nenhum registro encontrado</td>
+                                        <td colspan="100%" class="text-center">Nenhum registro encontrado</td>
                                     </tr>`);
             return false;
         }
@@ -61,16 +61,16 @@ function getAll(table = null) {
     });
 }
 
-function inserir_atualizar(elem, id = null, table = null, dados = null) {
+function inserir_atualizar(elem, id = null, destino = null, dados = null) {
     loader(elem);
 
-    if (!table || !dados) {
+    if (!destino || !dados) {
         return false;
     }
 
     var data_post = {
+        'destino': destino,
         'function': 'insert',
-        'table': table,
         'dados': dados
     };
 
@@ -79,7 +79,7 @@ function inserir_atualizar(elem, id = null, table = null, dados = null) {
         data_post.id = id;
     }
 
-    $.post('../functions.php', data_post, function (response) {
+    $.post('../handler.php', data_post, function (response) {
         response = JSON.parse(response);
 
         if (response.status == 1) {
@@ -88,7 +88,7 @@ function inserir_atualizar(elem, id = null, table = null, dados = null) {
             if (id) {
                 retornaEdicao();
             }
-            getAll(table);
+            getAll(destino);
         } else {
             simpleMsg('erro', 'Erro ao efetuar ação. Tente novamente!');
         }
@@ -122,14 +122,14 @@ function simpleMsg(tipo, msg) {
     });
 }
 
-function editar(elem, id, table) {
+function editar(elem, id, destino) {
     var data_post = {
+        'destino': destino,
         'function': 'get_by_id',
-        'table': table,
         'id': id
     };
 
-    $.post('../functions.php', data_post, function (response) {
+    $.post('../handler.php', data_post, function (response) {
         response = JSON.parse(response);
         preencherInputsEditar(response.dados);
 
@@ -154,7 +154,7 @@ function retornaEdicao() {
     $('#info_acao').html('');
 }
 
-function excluir(elem, id, table, obs = '') {
+function excluir(elem, id, destino, obs = '') {
     var msg = `Você tem deseja que excluir o registro ID ${id}?`;
     msg += (!obs) ? '' : `<br><b>Observação: ${obs}</b>`;
 
@@ -175,17 +175,17 @@ function excluir(elem, id, table, obs = '') {
                 btnClass: 'btn-green',
                 action: function () {
                     var data_post = {
+                        'destino': destino,
                         'function': 'delete',
-                        'table': table,
                         'id': id
                     };
 
-                    $.post('../functions.php', data_post, function (response) {
+                    $.post('../handler.php', data_post, function (response) {
                         response = JSON.parse(response);
 
                         if (response.status == 1) {
                             simpleMsg('ok', 'Registro excluído com sucesso!');
-                            getAll(table);
+                            getAll(destino);
                         } else {
                             simpleMsg('erro', 'Erro ao excluir registro!');
                         }

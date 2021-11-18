@@ -78,6 +78,19 @@
 
         var id = $(elem).attr('data-id');
 
+        if( $('#nome').val() == '' ){
+            simpleMsg('erro', 'Por favor, digite o nome do produto!');
+            return false;
+        }
+        if( $('#valor').val() == '' ){
+            simpleMsg('erro', 'Por favor, digite o valor do produto!');
+            return false;
+        }
+        if( $('#id_tipo_produto').val() == '' ){
+            simpleMsg('erro', 'Por favor, selecione o tipo do produto!');
+            return false;
+        }
+
         var dados = {
             'nome': $('#nome').val(),
             'valor': $('#valor').val().replace(',', '.'),
@@ -98,11 +111,11 @@
 
     function montaSlcTiposProdutos() {
         var data_post = {
-            'function': 'get_all',
-            'table': 'tipos_produtos'
+            'destino': 'tipos_produtos',
+            'function': 'get_all'
         };
 
-        $.post('../functions.php', data_post, function (response) {
+        $.post('../handler.php', data_post, function (response) {
             response = JSON.parse(response);
 
             var options = '';
@@ -118,11 +131,11 @@
 
     function getNomesTipos() {
         var data_post = {
-            'function': 'get_all',
-            'table': 'tipos_produtos'
+            'destino': 'tipos_produtos',
+            'function': 'get_all'
         };
 
-        $.post('../functions.php', data_post, function (response) {
+        $.post('../handler.php', data_post, function (response) {
             response = JSON.parse(response);
             $.each(response.dados, function (index, val) {
                 $('#table_content').find('td.id_tipo_'+val.id).text(val.nome_tipo);
